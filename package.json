@@ -1,0 +1,25 @@
+{
+  "name": "cip-26",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/lucadonazzon/cip-26.git",
+  "author": "Luca Donazzon <luca.donazzon@me.com",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon -r esm index.js",
+    "generate-key": "nodemon -r esm generateKeyPair.js",
+    "submit-tx": "node -r esm submitTransaction.js"
+  },
+  "dependencies": {
+    "blake2": "^4.1.1",
+    "cbor": "^8.1.0",
+    "json-keys-sort": "^2.1.0",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "esm": "^3.2.25",
+    "nodemon": "^2.0.20"
+  }
+}
