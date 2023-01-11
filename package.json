@@ -6,8 +6,9 @@
   "author": "Luca Donazzon <luca.donazzon@me.com",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon -r esm index.js",
-    "generate-key": "nodemon -r esm generateKeyPair.js",
+    "dev": "nodemon -r esm index.js",
+    "generate-json-files": "node -r esm index.js",
+    "generate-key-pair": "node -r esm generateKeyPair.js",
     "submit-tx": "node -r esm submitTransaction.js"
   },
   "dependencies": {

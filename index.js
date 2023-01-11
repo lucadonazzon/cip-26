@@ -66,7 +66,7 @@ function generateJson() {
 
   try {
     fs.writeFileSync(cipFilePath, JSON.stringify(myCipJsonFile))
-    console.log('JSON cip.json saved.')
+    console.log(`'JSON ${cipFilePath} saved.'`)
   } catch (error) {
     console.error('JSON cip.json saving error:', error)
   }
@@ -141,15 +141,15 @@ const cipFilePath = process.env.CIP_FILE_PATH;
 const metadataFilePath = process.env.METADATA_FILE_PATH;
 const protocolFilePath = process.env.PROTOCOL_FILE_PATH
 
-const subject = "GamesTestDApp-1";
-const name = "Games TestDApp 1";
+const subject = "NFTTestDApp-1";
+const name = "NFT TestDApp 1";
 const description = "This is a dApp description..."
 const logo = "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";
 const preimage = {
   "alg": "sha1",
   "msg": "AADDBBCC"
 }
-const url = "https://games1.tespdapp.x/app";
+const url = "https://nft.tespdapp.x/app";
 const entries = [
   /** DAppDeployedScripts */
   {
@@ -162,7 +162,7 @@ const entries = [
   {
     entryName: "DAppCategory",
     entry: {
-      value: "Games",
+      value: "NFT",
       sequenceNumber: 0,
     }
   },
@@ -186,7 +186,7 @@ const entries = [
   {
     entryName: "DAppCompanyURL",
     entry: {
-      value: "https://games1.tespdapp.x",
+      value: "https://nft1.tespdapp.x",
       sequenceNumber: 0,
     }
   },
@@ -222,7 +222,7 @@ const entries = [
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 generateJson();
 const cipRootHash = calculateRootHash();
-console.log("Calculated CIP JSON rootHash:", cipRootHash)
+// console.log("Calculated CIP JSON rootHash:", cipRootHash)
 generateMetadataJsonFile();
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
