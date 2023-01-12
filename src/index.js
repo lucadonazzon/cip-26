@@ -8,6 +8,7 @@ import YAML from 'yaml';
 import * as util from 'tweetnacl-util';
 nacl.util = util;
 
+let subject = '';
 
 dotenv.config();
 
@@ -144,7 +145,6 @@ const cipFilePath = process.env.CIP_FILE_PATH;
 const cipYmlFilePath = process.env.CIP_YML_FILE_PATH;
 const metadataFilePath = process.env.METADATA_FILE_PATH;
 const protocolFilePath = process.env.PROTOCOL_FILE_PATH
-let subject = ''
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 generateJson();
