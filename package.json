@@ -5,18 +5,20 @@
   "repository": "https://github.com/lucadonazzon/cip-26.git",
   "author": "Luca Donazzon <luca.donazzon@me.com",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon -r esm index.js",
-    "generate-json-files": "node -r esm index.js",
-    "generate-key-pair": "node -r esm generateKeyPair.js",
-    "submit-tx": "node -r esm submitTransaction.js"
+    "dev": "nodemon --watch src src/index.js",
+    "generate-json-files": "node src/index.js",
+    "generate-key-pair": "node src/generateKeyPair.js",
+    "submit-tx": "node src/submitTransaction.js"
   },
   "dependencies": {
     "blake2": "^4.1.1",
     "cbor": "^8.1.0",
     "json-keys-sort": "^2.1.0",
     "tweetnacl": "^1.0.3",
-    "tweetnacl-util": "^0.15.1"
+    "tweetnacl-util": "^0.15.1",
+    "yaml": "^2.2.1"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
