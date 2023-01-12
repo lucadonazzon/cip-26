@@ -93,9 +93,19 @@ Generate key pair\
 Copy .env_example to .end and edit it accordingly\
 `$ cp .env_example .end`
 
-Edit `index.js` from line 144 to 220 accordingly\
-Generate cip.json and metadata.json:\
+Edit `cip26.yml` accordingly\
+Generate `cip.json` and `metadata.json`:\
 `$ yarn generate-json-files`
+
+Generated `cip.json` file to be submitted to CIP-26 server
+```
+POST /metadata HTTP/1.1
+HOST: https://cip26metadata.apps.atixlabs.xyz
+Content-Type:application/json
+Accept:application/json
+
+<cip.json>
+```
 
 Submit transaction to Preview testnet\
 `$ yarn submit-tx`

@@ -51,7 +51,7 @@ function generateJson() {
   const yml = YAML.parse(file);
 
   const myCipJsonFile = {}
-  const subject = yml.subject;
+  subject = yml.subject;
 
   for (const prop in yml) {
     if (prop === 'entries') {
@@ -69,7 +69,7 @@ function generateJson() {
       myCipJsonFile[prop] = yml[prop]
     }
   }
-  
+
   try {
     fs.writeFileSync(cipFilePath, JSON.stringify(myCipJsonFile))
     console.log(`'JSON ${cipFilePath} saved.'`)
@@ -94,7 +94,7 @@ const calculateRootHash = () => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-const generateMetadataJsonFile = () => {
+const generateMetadataJsonFile = (cipRootHash) => {
   try {
     const metadataJson = {
       "666": {
@@ -144,12 +144,11 @@ const cipFilePath = process.env.CIP_FILE_PATH;
 const cipYmlFilePath = process.env.CIP_YML_FILE_PATH;
 const metadataFilePath = process.env.METADATA_FILE_PATH;
 const protocolFilePath = process.env.PROTOCOL_FILE_PATH
-
+let subject = ''
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 generateJson();
-// calculateRootHash();
-// generateMetadataJsonFile();
+generateMetadataJsonFile(calculateRootHash());
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
