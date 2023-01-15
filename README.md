@@ -2,22 +2,43 @@
 
 ## Set up cardano-cli
 1. Install Daedalus wallet
-2. add cardano-cli PWD to PATH \
+2. add cardano-cli PWD to PATH: /Applications/Daedalus Preview.app/Contents/MacOS
+3. add cardano-node.socket to PATH
 `$ export CARDANO_NODE_SOCKET_PATH="<user root folder>/Library/Application Support/Daedalus Preview/cardano-node.socket"`
 
-### Useful commands
-
-To query tip\
-`$ cardano-cli query tip --testnet-magic 2`
-
-Create Payment Keys\
+## Set up wallet
+1. Create Payment Keys\
 `$ cardano-cli address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey`
-
-Create Wallet Address\
-`$ cardano-cli address build --payment-verification-key-file payment.vkey --stake-verification-key-file stake.vkey --out-file payment.addr --testnet-magic=2`
-
-Create protocol\
+2. Create Wallet Address\
+`$ cardano-cli address build --payment-verification-key-file payment.vkey --stake-verification-key-file stake.vkey --out-file payment.addr --testnet-magic=2 `
+3. Test ada at [https://docs.cardano.org/cardano-testnet/tools/faucet](url)
+4. Retrieves the node’s current pool parameters\
 `$ cardano-cli query protocol-parameters --out-file protocol.json --testnet-magic=2`
+5. Query tip\
+`$ cardano-cli query tip --testnet-magic 2`
+6. Install packages\
+`$ yarn install`
+7. Generate key pair\
+`$ yarn generate-key-pair`
+8. Copy .env_example to .end and edit it accordingly\
+`$ cp .env_example .end`
+9. Edit `cip26.yml` accordingly\
+10. Generate `cip.json` and `metadata.json`:\
+`$ yarn generate-json-files`
+11. Submit `cip.json` file to CIP-26 server
+```
+POST /metadata HTTP/1.1
+HOST: https://cip26metadata.apps.atixlabs.xyz
+Content-Type:application/json
+Accept:application/json
+
+<cip.json>
+```
+
+12. Submit transaction to Preview testnet\
+`$ yarn submit-tx`
+
+### Useful commands
 
 Query UTXO
 ```
@@ -82,31 +103,5 @@ To submit the transaction:\
 ### Testnets faucet
 [https://docs.cardano.org/cardano-testnet/tools/faucet](url)
 
-## Scripts usage
 
-Install packages\
-`$ yarn install`
-
-Generate key pair\
-`$ yarn generate-key-pair`
-
-Copy .env_example to .end and edit it accordingly\
-`$ cp .env_example .end`
-
-Edit `cip26.yml` accordingly\
-Generate `cip.json` and `metadata.json`:\
-`$ yarn generate-json-files`
-
-Generated `cip.json` file to be submitted to CIP-26 server
-```
-POST /metadata HTTP/1.1
-HOST: https://cip26metadata.apps.atixlabs.xyz
-Content-Type:application/json
-Accept:application/json
-
-<cip.json>
-```
-
-Submit transaction to Preview testnet\
-`$ yarn submit-tx`
 
