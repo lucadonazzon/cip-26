@@ -9,7 +9,7 @@
 ## Set up wallet
 1. Create Payment Keys\
 `$ cardano-cli address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey`
-2. Create Stake key pair\
+2. To generate a stake key pair\
 `$ cardano-cli stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey`
 3. Create Wallet Address\
 `$ cardano-cli address build --payment-verification-key-file payment.vkey --stake-verification-key-file stake.vkey --out-file payment.addr --testnet-magic=2 `
