@@ -9,23 +9,25 @@
 ## Set up wallet
 1. Create Payment Keys\
 `$ cardano-cli address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey`
-2. Create Wallet Address\
+2. Create Stake key pair\
+`$ cardano-cli stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey`
+3. Create Wallet Address\
 `$ cardano-cli address build --payment-verification-key-file payment.vkey --stake-verification-key-file stake.vkey --out-file payment.addr --testnet-magic=2 `
-3. Test ada at [https://docs.cardano.org/cardano-testnet/tools/faucet](url)
-4. Retrieves the node’s current pool parameters\
+4. Test ada at [https://docs.cardano.org/cardano-testnet/tools/faucet](url)
+5. Retrieves the node’s current pool parameters\
 `$ cardano-cli query protocol-parameters --out-file protocol.json --testnet-magic=2`
-5. Query tip\
+6. Query tip\
 `$ cardano-cli query tip --testnet-magic 2`
-6. Install packages\
+7. Install packages\
 `$ yarn install`
-7. Generate key pair\
+8. Generate key pair\
 `$ yarn generate-key-pair`
-8. Copy .env_example to .end and edit it accordingly\
+9. Copy .env_example to .end and edit it accordingly\
 `$ cp .env_example .end`
-9. Edit `cip26.yml` accordingly\
-10. Generate `cip.json` and `metadata.json`:\
+10. Edit `cip26.yml` accordingly\
+11. Generate `cip.json` and `metadata.json`:\
 `$ yarn generate-json-files`
-11. Submit `cip.json` file to CIP-26 server
+12. Submit `cip.json` file to CIP-26 server
 ```
 POST /metadata HTTP/1.1
 HOST: https://cip26metadata.apps.atixlabs.xyz
