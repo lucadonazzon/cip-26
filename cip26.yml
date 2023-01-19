@@ -1,40 +1,40 @@
 ---
-subject: TestDApp-002
+subject: TestDApp-003
 preimage:
   alg: sha1
   msg: AADDBBCC
 entries:
   - entryName: DAppName
     entry:
-      value: "TestDapp 002"
+      value: "TestDapp 003"
       sequenceNumber: 0
   - entryName: DAppDescription
     entry:
-      value: "This is a dApp description..."
+      value: This is a dApp description...
       sequenceNumber: 0
   - entryName: DAppSummary
     entry:
-      value: short summary that will be shown also on classic view card boards
+      value: Short summary that will be shown also on classic view card boards
       sequenceNumber: 0      
   - entryName: DAppURL
     entry:
-      value: https://002.testdapp.x/app
+      value: https://003.testdapp.x/app
       sequenceNumber: 0
   - entryName: DAppCompanyURL
     entry:
-      value: https://002.testdapp.x
+      value: https://www.testdapp.x
       sequenceNumber: 0
   - entryName: DAppCategory
     entry:
       value: DeFi
       sequenceNumber: 0
-  - entryName: DAppDeveloperName
+  - entryName: DAppCompanyName
     entry:
-      value: John Doe
+      value: The Test Dapps Company
       sequenceNumber: 0
-  - entryName: DAppDevelopersEmailAddress
+  - entryName: DAppCompanyEmailAddress
     entry:
-      value: jhon.doe@testdapp.x
+      value: info@testdapp.x
       sequenceNumber: 0                  
   - entryName: DAppLogo
     entry:

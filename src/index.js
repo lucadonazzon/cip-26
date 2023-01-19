@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import cbor from 'cbor';
 import blake2 from 'blake2';
 import nacl from 'tweetnacl';
-import fs from "fs"
+import fs from "fs";
 import jsonKeysSort from 'json-keys-sort';
 import YAML from 'yaml';
 import * as util from 'tweetnacl-util';
