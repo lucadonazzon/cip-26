@@ -27,7 +27,9 @@
 10. Edit `cip26.yml` accordingly\
 11. Generate `cip.json` and `metadata.json`:\
 `$ yarn generate-json-files`
-12. Submit `cip.json` file to CIP-26 server
+12. Submit `cip.json` file to CIP-26 server\
+`$ yarn submit-cip`
+or
 ```
 POST /metadata HTTP/1.1
 HOST: https://cip26metadata.apps.atixlabs.xyz
