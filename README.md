@@ -13,7 +13,8 @@
 `$ cardano-cli stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey`
 3. Create Wallet Address\
 `$ cardano-cli address build --payment-verification-key-file payment.vkey --stake-verification-key-file stake.vkey --out-file payment.addr --testnet-magic=2 `
-4. Test ada at [https://docs.cardano.org/cardano-testnet/tools/faucet](url)
+4. Request Test ADA at [https://docs.cardano.org/cardano-testnet/tools/faucet](url)\
+NB transaction fee it's a variable amount, something arount 190.000 lovelace
 5. Retrieves the node’s current pool parameters\
 `$ cardano-cli query protocol-parameters --out-file protocol.json --testnet-magic=2`
 6. Query tip\
@@ -21,28 +22,17 @@
 7. Install packages\
 `$ yarn install`
 8. Generate key pair\
-`$ yarn generate-key-pair`
+`$ yarn generate-key-pair`\
+Copy `publicKey` and `secretKey` to `.env` file (see step 9)
 9. Copy .env_example to .end and edit it accordingly\
 `$ cp .env_example .end`
 10. Edit `cip26.yml` accordingly\
-11. Generate `cip.json` and `metadata.json`:\
-`$ yarn generate-json-files`
-12. Submit `cip.json` file to CIP-26 server\
-`$ yarn submit-cip`
-or
-```
-POST /metadata HTTP/1.1
-HOST: https://cip26metadata.apps.atixlabs.xyz
-Content-Type:application/json
-Accept:application/json
-
-<cip.json>
-```
-
-12. Submit transaction to Preview testnet\
-`$ yarn submit-tx`
+11. Launch **cip26-cli** and follow the instruction\
+`$ yarn start`
 
 ### Useful commands
+
+Ref.: [https://docs.cardano.org/development-guidelines/use-cli](url)
 
 Query UTXO
 ```
