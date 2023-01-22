@@ -1,13 +1,20 @@
 ---
-# subject: TestDApp-003
-subject: asdasdasd-004
+subject: DeFiTestDApp-002
 preimage:
   alg: sha1
   msg: AADDBBCC
 entries:
   - entryName: DAppName
     entry:
-      value: "TestDapp 003"
+      value: "DeFiTestDApp 002"
+      sequenceNumber: 0
+  - entryName: DAppURL
+    entry:
+      value: https://defi2.testdapp.x/app
+      sequenceNumber: 0
+  - entryName: DAppCategory
+    entry:
+      value: DeFi
       sequenceNumber: 0
   - entryName: DAppDescription
     entry:
@@ -17,17 +24,9 @@ entries:
     entry:
       value: Short summary that will be shown also on classic view card boards
       sequenceNumber: 0      
-  - entryName: DAppURL
-    entry:
-      value: https://003.testdapp.x/app
-      sequenceNumber: 0
   - entryName: DAppCompanyURL
     entry:
       value: https://www.testdapp.x
-      sequenceNumber: 0
-  - entryName: DAppCategory
-    entry:
-      value: DeFi
       sequenceNumber: 0
   - entryName: DAppCompanyName
     entry:

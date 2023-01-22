@@ -73,10 +73,8 @@ function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath) {
 
   try {
     fs.writeFileSync(cipFilePath, JSON.stringify(myCipJsonFile))
-    console.log(`'JSON ${cipFilePath} saved.'`)
-    return cipFilePath
+    return { subject, cip26FilePath: cipFilePath }
   } catch (error) {
-    console.error('JSON cip.json saving error:', error)
     return error
   }
 }
@@ -125,10 +123,8 @@ const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publ
     }
 
     fs.writeFileSync(metadataFilePath, JSON.stringify(metadataJson))
-    // console.log(`'JSON ${metadataFilePath} saved.'`)
     return true
   } catch (error) {
-    // console.error(`JSON ${metadataFilePath} saving error:`, error)
     return error;
   }
 }
@@ -136,26 +132,6 @@ const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publ
 // **********************************************************************************************************
 // **********************************************************************************************************
 // **********************************************************************************************************
-
-
-// **********************************************************************************************************
-// ** PROPERTIES & FIELDS ***********************************************************************************
-// **********************************************************************************************************
-
-// const walletAddress = process.env.WALLET_ADDRESS;
-// const publicKey = process.env.PUBLIC_KEY;
-// const secretKey = process.env.SECRET_KEY;
-
-// const cipFilePath = process.env.CIP_FILE_PATH;
-// const cipYmlFilePath = process.env.CIP_YML_FILE_PATH;
-// const metadataFilePath = process.env.METADATA_FILE_PATH;
-// const protocolFilePath = process.env.PROTOCOL_FILE_PATH
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// generateJson();
-// generateMetadataJsonFile(calculateRootHash());
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 export {
   generateJson, calculateRootHash, generateMetadataJsonFile

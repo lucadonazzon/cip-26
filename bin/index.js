@@ -8,7 +8,6 @@ import fs from "fs";
 import shelljs from "shelljs";
 import _ from "lodash";
 
-// import { generateJson } from "../src/index.js"
 import { generateJson, calculateRootHash, generateMetadataJsonFile } from "./jsonGenerator.js"
 import { submitCip } from "./submitCip26.js";
 import { queryUTXO, createDraftTransaction, calculateTransactionFee, buildRealTransaction, signdRealTransaction, submitTransaction } from "./submitTransaction.js";
@@ -126,36 +125,25 @@ const run = async () => {
     // show script introduction
     init();
 
-    // ask questions1
+    // ask questions1: CIP-26 json file generation
+    console.log(chalk.black.bgYellowBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.black.bgYellowBright.bold(_.pad("CIP-26 json file generation..", PAD_END_SIZE)));
+    console.log(chalk.black.bgYellowBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     const answers1 = await askQuestions1();
     const { _cipYmlFilePath, _secretKey, _publicKey, _cipFilePath } = answers1;
-    // console.log("_walletAddress:", _walletAddress)
-    // console.log("_cipYmlFilePath:", _cipYmlFilePath)
-    const cip26FilePath = generateJson(_cipYmlFilePath, _secretKey, _publicKey, _cipFilePath);
-    console.log(chalk.white.bgGreen.bold(_.padEnd('-', PAD_END_SIZE, '-')))
-    console.log(chalk.white.bgGreen.bold(_.pad(`Done! CIP-26 json file created: ${cip26FilePath}`, PAD_END_SIZE)))
-    console.log(chalk.white.bgGreen.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    const { subject, cip26FilePath } = generateJson(_cipYmlFilePath, _secretKey, _publicKey, _cipFilePath);
+    console.log(chalk.black.bgYellowBright.bold(_.pad(`SUBJECT: ${subject}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgYellowBright.bold(_.pad(`Done! CIP-26 json file created: ${cip26FilePath}`, PAD_END_SIZE)))
 
-    // phase 2
-    // const answers2 = await askToSeeJson();
-    // const { seeJson } = answers2;
-    // console.log("seeJson:", seeJson)
-    // if (seeJson) {
-    //   const file = fs.readFileSync(cip26FilePath, 'utf8')
-    //   console.log(">>>>", file)
-    // }
-
-    // ask questions2
+    // ask questions2: Metadata.json generation
     console.log();
     console.log(chalk.yellowBright.bgBlue.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     console.log(chalk.yellowBright.bgBlue.bold(_.pad("Metadata.json generation", PAD_END_SIZE)));
     console.log(chalk.yellowBright.bgBlue.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     const answers2 = await askQuestions2();
     const { _metadataFilePath } = answers2;
-
     const _rootHash = calculateRootHash(_cipFilePath)
     console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Calculated rootHash: ${_rootHash}`, PAD_END_SIZE)))
-
     const out2 = generateMetadataJsonFile(_metadataFilePath, _rootHash, secretKey, publicKey)
     if (out2 === true) console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Metadata.json generated: ${_metadataFilePath}`, PAD_END_SIZE)))
 
@@ -173,43 +161,43 @@ const run = async () => {
 
     // ask questions4: on-chain submission
     console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
-    console.log(chalk.black.bgCyanBright.bold(_.pad("Block-chain submission", PAD_END_SIZE)));
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.black.bgGreenBright.bold(_.pad("Block-chain submission", PAD_END_SIZE)));
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     const answers4 = await askQuestions4();
     const { _walletAddress, _protocolFilePath, _paymentSkeyFilePath } = answers4;
     const { TxHash, TxIx, Amount } = await queryUTXO(_walletAddress);
 
     console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- TxHash: ${TxHash}`, PAD_END_SIZE)))
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- TxIx: ${TxIx}`, PAD_END_SIZE)))
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Wallet amount: ${Amount}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- TxHash: ${TxHash}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- TxIx: ${TxIx}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Wallet amount: ${Amount}`, PAD_END_SIZE)))
 
     console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Creating transaction draft...`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Creating transaction draft...`, PAD_END_SIZE)))
     await createDraftTransaction(_walletAddress, _metadataFilePath, TxHash, TxIx)
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction draft created!`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction draft created!`, PAD_END_SIZE)))
 
     console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Calculating transaction fee...`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Calculating transaction fee...`, PAD_END_SIZE)))
     const { fee, finalAmount } = await calculateTransactionFee(_protocolFilePath, Amount);
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Fee: ${fee}`, PAD_END_SIZE)))
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Final wallet ,amount: ${finalAmount}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Fee: ${fee}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Final wallet ,amount: ${finalAmount}`, PAD_END_SIZE)))
 
     console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Building transaction...`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Building transaction...`, PAD_END_SIZE)))
     await buildRealTransaction(_walletAddress, _metadataFilePath, TxHash, TxIx, fee, finalAmount);
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction built!`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction built!`, PAD_END_SIZE)))
 
     console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Signing transaction...`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Signing transaction...`, PAD_END_SIZE)))
     await signdRealTransaction(_paymentSkeyFilePath)
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction signed!`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction signed!`, PAD_END_SIZE)))
 
     console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Submitting transaction...`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Submitting transaction...`, PAD_END_SIZE)))
     await submitTransaction()
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction submitted!`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction submitted!`, PAD_END_SIZE)))
 
 
   } catch (error) {
