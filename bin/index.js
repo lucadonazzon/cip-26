@@ -1,0 +1,225 @@
+#!/usr/bin/env node
+
+import dotenv from 'dotenv';
+import inquirer from "inquirer";
+import chalk from "chalk";
+import figlet from "figlet";
+import fs from "fs";
+import shelljs from "shelljs";
+import _ from "lodash";
+
+// import { generateJson } from "../src/index.js"
+import { generateJson, calculateRootHash, generateMetadataJsonFile } from "./jsonGenerator.js"
+import { submitCip } from "./submitCip26.js";
+import { queryUTXO, createDraftTransaction, calculateTransactionFee, buildRealTransaction, signdRealTransaction, submitTransaction } from "./submitTransaction.js";
+
+dotenv.config();
+
+const walletAddress = process.env.WALLET_ADDRESS;
+const publicKey = process.env.PUBLIC_KEY;
+const secretKey = process.env.SECRET_KEY;
+
+const cipFilePath = process.env.CIP_FILE_PATH;
+const cipYmlFilePath = process.env.CIP_YML_FILE_PATH;
+const metadataFilePath = process.env.METADATA_FILE_PATH;
+const protocolFilePath = process.env.PROTOCOL_FILE_PATH
+const cipServerUrl = process.env.CIP_SERVER_URL;
+const paymentSkeyFilePath = process.env.PAYMENT_SKEY_FILE_PATH;
+
+
+const init = () => {
+  console.log(
+    chalk.green(
+      figlet.textSync("CIP-26 CLI", {
+        // font: "Ghost",
+        horizontalLayout: "default",
+        verticalLayout: "default"
+      })
+    )
+  );
+};
+
+const askQuestions1 = () => {
+  const questions = [
+    {
+      name: "_publicKey",
+      type: "input",
+      message: "Public Key?",
+      default: publicKey
+    },
+    {
+      name: "_secretKey",
+      type: "input",
+      message: "Secret Key?",
+      default: secretKey
+    },
+    {
+      name: "_cipYmlFilePath",
+      type: "input",
+      message: "CIP-26 YAML path/file-name?",
+      default: cipYmlFilePath
+    },
+    {
+      name: "_cipFilePath",
+      type: "input",
+      message: "CIP-26 json output file name?",
+      default: cipFilePath
+    },
+  ];
+  return inquirer.prompt(questions);
+};
+
+const askQuestions2 = () => {
+  const questions = [
+    {
+      name: "_metadataFilePath",
+      type: "input",
+      message: "What's the metadata file name?",
+      default: metadataFilePath
+    },
+  ];
+  return inquirer.prompt(questions);
+};
+
+const askQuestions3 = () => {
+  const questions = [
+    {
+      name: "_cipServerUrl",
+      type: "input",
+      message: "What's the CIP-26 server url?",
+      default: cipServerUrl
+    },
+  ];
+  return inquirer.prompt(questions);
+};
+
+const askQuestions4 = () => {
+  const questions = [
+    {
+      name: "_walletAddress",
+      type: "input",
+      message: "Wallet address?",
+      default: walletAddress
+    },
+    {
+      name: "_protocolFilePath",
+      type: "input",
+      message: "Protocol file?",
+      default: protocolFilePath
+    },
+    {
+      name: "_paymentSkeyFilePath",
+      type: "input",
+      message: "Payment skey file?",
+      default: paymentSkeyFilePath
+    },
+
+  ];
+  return inquirer.prompt(questions);
+};
+
+const PAD_END_SIZE = 150;
+
+const run = async () => {
+
+  try {
+    // show script introduction
+    init();
+
+    // ask questions1
+    const answers1 = await askQuestions1();
+    const { _cipYmlFilePath, _secretKey, _publicKey, _cipFilePath } = answers1;
+    // console.log("_walletAddress:", _walletAddress)
+    // console.log("_cipYmlFilePath:", _cipYmlFilePath)
+    const cip26FilePath = generateJson(_cipYmlFilePath, _secretKey, _publicKey, _cipFilePath);
+    console.log(chalk.white.bgGreen.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.white.bgGreen.bold(_.pad(`Done! CIP-26 json file created: ${cip26FilePath}`, PAD_END_SIZE)))
+    console.log(chalk.white.bgGreen.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+
+    // phase 2
+    // const answers2 = await askToSeeJson();
+    // const { seeJson } = answers2;
+    // console.log("seeJson:", seeJson)
+    // if (seeJson) {
+    //   const file = fs.readFileSync(cip26FilePath, 'utf8')
+    //   console.log(">>>>", file)
+    // }
+
+    // ask questions2
+    console.log();
+    console.log(chalk.yellowBright.bgBlue.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.yellowBright.bgBlue.bold(_.pad("Metadata.json generation", PAD_END_SIZE)));
+    console.log(chalk.yellowBright.bgBlue.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    const answers2 = await askQuestions2();
+    const { _metadataFilePath } = answers2;
+
+    const _rootHash = calculateRootHash(_cipFilePath)
+    console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Calculated rootHash: ${_rootHash}`, PAD_END_SIZE)))
+
+    const out2 = generateMetadataJsonFile(_metadataFilePath, _rootHash, secretKey, publicKey)
+    if (out2 === true) console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Metadata.json generated: ${_metadataFilePath}`, PAD_END_SIZE)))
+
+    // ask questions3: CIP-26 server phase
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.black.bgCyanBright.bold(_.pad("CIP-26 server submission", PAD_END_SIZE)));
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    const answers3 = await askQuestions3();
+    const { _cipServerUrl } = answers3;
+    const cipSubm = await submitCip(_cipServerUrl, _cipFilePath);
+    if (typeof cipSubm === 'string' && cipSubm === 'Created')
+      console.log(chalk.black.bgCyanBright.bold(_.pad(`- ${_cipFilePath} successfully submitted!`, PAD_END_SIZE)))
+
+
+    // ask questions4: on-chain submission
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.black.bgCyanBright.bold(_.pad("Block-chain submission", PAD_END_SIZE)));
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    const answers4 = await askQuestions4();
+    const { _walletAddress, _protocolFilePath, _paymentSkeyFilePath } = answers4;
+    const { TxHash, TxIx, Amount } = await queryUTXO(_walletAddress);
+
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- TxHash: ${TxHash}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- TxIx: ${TxIx}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Wallet amount: ${Amount}`, PAD_END_SIZE)))
+
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Creating transaction draft...`, PAD_END_SIZE)))
+    await createDraftTransaction(_walletAddress, _metadataFilePath, TxHash, TxIx)
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction draft created!`, PAD_END_SIZE)))
+
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Calculating transaction fee...`, PAD_END_SIZE)))
+    const { fee, finalAmount } = await calculateTransactionFee(_protocolFilePath, Amount);
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Fee: ${fee}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Final wallet ,amount: ${finalAmount}`, PAD_END_SIZE)))
+
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Building transaction...`, PAD_END_SIZE)))
+    await buildRealTransaction(_walletAddress, _metadataFilePath, TxHash, TxIx, fee, finalAmount);
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction built!`, PAD_END_SIZE)))
+
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Signing transaction...`, PAD_END_SIZE)))
+    await signdRealTransaction(_paymentSkeyFilePath)
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction signed!`, PAD_END_SIZE)))
+
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`Submitting transaction...`, PAD_END_SIZE)))
+    await submitTransaction()
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd(`- Transaction submitted!`, PAD_END_SIZE)))
+
+
+  } catch (error) {
+    console.error("ERROR:", error)
+    console.log();
+    console.log();
+    console.log(chalk.white.bgRed.bold(_.padEnd('!', PAD_END_SIZE, '!')))
+    console.log(chalk.white.bgRed.bold(_.pad(error, PAD_END_SIZE)));
+    console.log(chalk.white.bgRed.bold(_.padEnd('!', PAD_END_SIZE, '!')))
+  }
+};
+
+run();

@@ -47,7 +47,7 @@ const encodeAndSign = (subject, entry, entryName, secretKey = '') => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-function generateJson() {
+function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath) {
   const file = fs.readFileSync(cipYmlFilePath, 'utf8')
   const yml = YAML.parse(file);
 
@@ -74,8 +74,10 @@ function generateJson() {
   try {
     fs.writeFileSync(cipFilePath, JSON.stringify(myCipJsonFile))
     console.log(`'JSON ${cipFilePath} saved.'`)
+    return cipFilePath
   } catch (error) {
     console.error('JSON cip.json saving error:', error)
+    return error
   }
 }
 
@@ -83,7 +85,7 @@ function generateJson() {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-const calculateRootHash = () => {
+const calculateRootHash = (cipFilePath) => {
   const rawdata = fs.readFileSync(cipFilePath);
   const cip = JSON.parse(rawdata);
   const sortedCip = jsonKeysSort.sort(cip)
@@ -95,10 +97,11 @@ const calculateRootHash = () => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-const generateMetadataJsonFile = (cipRootHash) => {
+const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publicKey) => {
   try {
+
     const metadataJson = {
-      "666": {
+      "1666": {
         subject,
         type: "REGISTER",
         rootHash: cipRootHash,
@@ -107,14 +110,14 @@ const generateMetadataJsonFile = (cipRootHash) => {
     }
 
     const _blake = blake2.createHash('blake2b', { digestLength: 32 });
-    const _hash = _blake.update(Buffer.from(JSON.stringify(metadataJson['666']))).digest('hex')
+    const _hash = _blake.update(Buffer.from(JSON.stringify(metadataJson['1666']))).digest('hex')
 
     const _sign = nacl.sign.detached(Buffer.from(_hash, 'hex'), Buffer.from(secretKey, 'hex'))
     // console.log(">>>>verify signature:",nacl.sign.detached.verify(Buffer.from(_hash, 'hex'), _sign, Buffer.from(publicKey, 'hex')))
 
     const _sign2 = Buffer.from(_sign).toString('hex')
 
-    metadataJson['666'].signature = {
+    metadataJson['1666'].signature = {
       r: _sign2.substring(0, 64),
       s: _sign2.substring(64),
       algo: "Ed25519−EdDSA",
@@ -122,9 +125,11 @@ const generateMetadataJsonFile = (cipRootHash) => {
     }
 
     fs.writeFileSync(metadataFilePath, JSON.stringify(metadataJson))
-    console.log(`'JSON ${metadataFilePath} saved.'`)
+    // console.log(`'JSON ${metadataFilePath} saved.'`)
+    return true
   } catch (error) {
-    console.error(`JSON ${metadataFilePath} saving error:`, error)
+    // console.error(`JSON ${metadataFilePath} saving error:`, error)
+    return error;
   }
 }
 
@@ -137,14 +142,14 @@ const generateMetadataJsonFile = (cipRootHash) => {
 // ** PROPERTIES & FIELDS ***********************************************************************************
 // **********************************************************************************************************
 
-const walletAddress = process.env.WALLET_ADDRESS;
-const publicKey = process.env.PUBLIC_KEY;
-const secretKey = process.env.SECRET_KEY;
+// const walletAddress = process.env.WALLET_ADDRESS;
+// const publicKey = process.env.PUBLIC_KEY;
+// const secretKey = process.env.SECRET_KEY;
 
-const cipFilePath = process.env.CIP_FILE_PATH;
-const cipYmlFilePath = process.env.CIP_YML_FILE_PATH;
-const metadataFilePath = process.env.METADATA_FILE_PATH;
-const protocolFilePath = process.env.PROTOCOL_FILE_PATH
+// const cipFilePath = process.env.CIP_FILE_PATH;
+// const cipYmlFilePath = process.env.CIP_YML_FILE_PATH;
+// const metadataFilePath = process.env.METADATA_FILE_PATH;
+// const protocolFilePath = process.env.PROTOCOL_FILE_PATH
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // generateJson();
@@ -153,5 +158,5 @@ const protocolFilePath = process.env.PROTOCOL_FILE_PATH
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 export {
-  generateJson
+  generateJson, calculateRootHash, generateMetadataJsonFile
 }
