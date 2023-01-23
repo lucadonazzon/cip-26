@@ -1,20 +1,20 @@
 ---
-subject: DeFiTestDApp-002 jj45
+subject: TestDApp-001
 preimage:
   alg: sha1
   msg: AADDBBCC
 entries:
   - entryName: DAppName
     entry:
-      value: "DeFiTestDApp 002 jj2"
+      value: "TestDApp-001"
       sequenceNumber: 0
   - entryName: DAppURL
     entry:
-      value: https://defi2.testdapp.x/app
+      value: https://001.testdapp.x/app
       sequenceNumber: 0
   - entryName: DAppCategory
     entry:
-      value: DeFi
+      value: Games|Development|DeFi|NFT!Security|Market Plac|Education|Identity|Other
       sequenceNumber: 0
   - entryName: DAppDescription
     entry:

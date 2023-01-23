@@ -25,7 +25,7 @@ NB transaction fee it's a variable amount, something around 190.000 lovelace
 `$ yarn generate-key-pair`\
 Copy `publicKey` and `secretKey` to `.env` file (see step 9)
 9. Copy .env_example to .end and edit it accordingly\
-`$ cp .env_example .end`
+`$ cp .env_example .env`
 10. Edit `cip26.yml` accordingly\
 11. Launch **cip26-cli** and follow the instruction\
 `$ yarn start`
