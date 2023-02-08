@@ -1,12 +1,34 @@
 import { exec } from "child_process"
 
+const getNet = (net) => {
+    let _net = '';
+    switch (net) {
+        case 'dev':
+            _net = '--testnet-magic=9';
+            break;
+        case 'preprod':
+            _net = '--testnet-magic=1';
+            break;
+        case 'preview':
+            _net = '--testnet-magic=2';
+            break;
+        case 'main':
+        case 'mainnet':
+            _net = '--mainnet';
+            break;
+        default:
+            console.log("Wrong network! Allowed values: dev|preview|preprod|main")
+            break;
+    }
+    return _net;
+}
 
-const queryUTXO = (walletAddress) => {
+const queryUTXO = (walletAddress, net = 'preview') => {
     return new Promise((resolve, reject) => {
 
         exec(`cardano-cli query utxo \
         --address ${walletAddress} \
-        --testnet-magic=2`, (error, stdout, stderr) => {
+        ${getNet(net)}`, (error, stdout, stderr) => {
             if (error) {
                 reject(error.message)
                 return;
@@ -51,7 +73,7 @@ const createDraftTransaction = (walletAddress, metadataFilePath, TxHash, TxIx) =
 }
 
 // **********************************************************************************************************
-const calculateTransactionFee = (protocolFilePath, Amount) => {
+const calculateTransactionFee = (protocolFilePath, Amount, net = 'preview') => {
     return new Promise((resolve, reject) => {
         const cmd = `cardano-cli transaction calculate-min-fee \
                     --tx-body-file tx.draft \
@@ -59,7 +81,7 @@ const calculateTransactionFee = (protocolFilePath, Amount) => {
                     --tx-out-count 1 \
                     --witness-count 1 \
                     --byron-witness-count 0 \
-                    --testnet-magic 2 \
+                    ${getNet(net)} \
                     --protocol-params-file ${protocolFilePath}`;
 
         exec(cmd, (error, stdout, stderr) => {
@@ -71,11 +93,11 @@ const calculateTransactionFee = (protocolFilePath, Amount) => {
                 reject(stderr)
                 return;
             }
-            
+
             const _match = stdout.match(/(\d+) Lovelace/)
             const fee = parseInt(_match[1]);
             const finalAmount = Amount - fee;
-            
+
             resolve({ fee, finalAmount });
         });
     });
@@ -99,19 +121,19 @@ const buildRealTransaction = (walletAddress, metadataFilePath, TxHash, TxIx, fee
                 reject(stderr)
                 return;
             }
-            
+
             resolve(true)
         });
     });
 }
 
 // **********************************************************************************************************
-const signdRealTransaction = (paymentSkeyFilePath) => {
+const signdRealTransaction = (paymentSkeyFilePath, net = 'preview') => {
     return new Promise((resolve, reject) => {
         exec(`cardano-cli transaction sign \
         --tx-body-file tx.draft \
         --signing-key-file ${paymentSkeyFilePath} \
-        --testnet-magic 2 \
+        ${getNet(net)} \
         --out-file tx.signed`, (error, stdout, stderr) => {
             if (error) {
                 reject(error.message)
@@ -126,9 +148,9 @@ const signdRealTransaction = (paymentSkeyFilePath) => {
     });
 }
 
-const submitTransaction = () => {
+const submitTransaction = (net = 'preview') => {
     return new Promise((resolve, reject) => {
-        exec(`cardano-cli transaction submit --tx-file tx.signed --testnet-magic 2`, (error, stdout, stderr) => {
+        exec(`cardano-cli transaction submit --tx-file tx.signed ${getNet(net)}`, (error, stdout, stderr) => {
             if (error) {
                 reject(error.message)
                 return;

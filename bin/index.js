@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 import inquirer from "inquirer";
 import chalk from "chalk";
 import figlet from "figlet";
-import fs from "fs";
-import shelljs from "shelljs";
+// import fs from "fs";
+// import shelljs from "shelljs";
 import _ from "lodash";
 
 import { generateJson, calculateRootHash, generateMetadataJsonFile } from "./jsonGenerator.js"
@@ -24,12 +24,13 @@ const metadataFilePath = process.env.METADATA_FILE_PATH;
 const protocolFilePath = process.env.PROTOCOL_FILE_PATH
 const cipServerUrl = process.env.CIP_SERVER_URL;
 const paymentSkeyFilePath = process.env.PAYMENT_SKEY_FILE_PATH;
+const net = process.env.NET;
 
 
 const init = () => {
   console.log(
     chalk.green(
-      figlet.textSync("CIP-26 CLI", {
+      figlet.textSync(`CIP-26 CLI - Network: ${net}`, {
         // font: "Ghost",
         horizontalLayout: "default",
         verticalLayout: "default"
@@ -135,6 +136,7 @@ const run = async () => {
     console.log(chalk.black.bgYellowBright.bold(_.pad(`SUBJECT: ${subject}`, PAD_END_SIZE)))
     console.log(chalk.black.bgYellowBright.bold(_.pad(`Done! CIP-26 json file created: ${cip26FilePath}`, PAD_END_SIZE)))
 
+
     // ask questions2: Metadata.json generation
     console.log();
     console.log(chalk.yellowBright.bgBlue.bold(_.padEnd('-', PAD_END_SIZE, '-')))
@@ -166,7 +168,7 @@ const run = async () => {
     console.log(chalk.black.bgGreenBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     const answers4 = await askQuestions4();
     const { _walletAddress, _protocolFilePath, _paymentSkeyFilePath } = answers4;
-    const { TxHash, TxIx, Amount } = await queryUTXO(_walletAddress);
+    const { TxHash, TxIx, Amount } = await queryUTXO(_walletAddress, net);
 
     console.log();
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- TxHash: ${TxHash}`, PAD_END_SIZE)))
@@ -180,7 +182,7 @@ const run = async () => {
 
     console.log();
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Calculating transaction fee...`, PAD_END_SIZE)))
-    const { fee, finalAmount } = await calculateTransactionFee(_protocolFilePath, Amount);
+    const { fee, finalAmount } = await calculateTransactionFee(_protocolFilePath, Amount, net);
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Fee: ${fee}`, PAD_END_SIZE)))
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Final wallet ,amount: ${finalAmount}`, PAD_END_SIZE)))
 
@@ -191,12 +193,12 @@ const run = async () => {
 
     console.log();
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Signing transaction...`, PAD_END_SIZE)))
-    await signdRealTransaction(_paymentSkeyFilePath)
+    await signdRealTransaction(_paymentSkeyFilePath, net)
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction signed!`, PAD_END_SIZE)))
 
     console.log();
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Submitting transaction...`, PAD_END_SIZE)))
-    await submitTransaction()
+    await submitTransaction(net)
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction submitted!`, PAD_END_SIZE)))
 
 
