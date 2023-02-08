@@ -1,10 +1,8 @@
-# How to register dApp to Cardano Preview testnet + metadata to CIP-26 server
+# How to register dApp to Cardano + submit metadata to CIP-26 server
 
 ## Set up cardano-cli
-1. Install Daedalus wallet
-2. add cardano-cli PWD to PATH: /Applications/Daedalus Preview.app/Contents/MacOS
-3. add cardano-node.socket to PATH
-`$ export CARDANO_NODE_SOCKET_PATH="<user root folder>/Library/Application Support/Daedalus Preview/cardano-node.socket"`
+[https://github.com/piotr-iohk/cardano-up](url)
+
 
 ## Set up wallet
 1. Create Payment Keys\

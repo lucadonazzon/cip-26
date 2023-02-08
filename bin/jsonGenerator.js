@@ -99,7 +99,7 @@ const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publ
   try {
 
     const metadataJson = {
-      "1666": {
+      "1667": {
         subject,
         type: "REGISTER",
         rootHash: cipRootHash,
@@ -108,14 +108,14 @@ const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publ
     }
 
     const _blake = blake2.createHash('blake2b', { digestLength: 32 });
-    const _hash = _blake.update(Buffer.from(JSON.stringify(metadataJson['1666']))).digest('hex')
+    const _hash = _blake.update(Buffer.from(JSON.stringify(metadataJson['1667']))).digest('hex')
 
     const _sign = nacl.sign.detached(Buffer.from(_hash, 'hex'), Buffer.from(secretKey, 'hex'))
     // console.log(">>>>verify signature:",nacl.sign.detached.verify(Buffer.from(_hash, 'hex'), _sign, Buffer.from(publicKey, 'hex')))
 
     const _sign2 = Buffer.from(_sign).toString('hex')
 
-    metadataJson['1666'].signature = {
+    metadataJson['1667'].signature = {
       r: _sign2.substring(0, 64),
       s: _sign2.substring(64),
       algo: "Ed25519−EdDSA",
