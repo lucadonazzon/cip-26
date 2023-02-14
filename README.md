@@ -5,6 +5,7 @@
 
 
 ## Set up wallet
+
 1. Create Payment Keys\
 `$ cardano-cli address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey`
 2. To generate a stake key pair\
@@ -14,9 +15,9 @@
 4. Request Test ADA at [https://docs.cardano.org/cardano-testnet/tools/faucet](url)\
 NB transaction fee it's a variable amount, something around 190.000 lovelace
 5. Retrieves the node’s current pool parameters\
-`$ cardano-cli query protocol-parameters --out-file protocol.json --testnet-magic=2`
+`$ cardano-cli query protocol-parameters --out-file protocol.json (--mainnet | --testnet-magic NATURAL)`
 6. Query tip\
-`$ cardano-cli query tip --testnet-magic 2`
+`$ cardano-cli query tip (--mainnet | --testnet-magic NATURAL)`
 7. Install packages\
 `$ yarn install`
 8. Generate key pair\
@@ -24,9 +25,15 @@ NB transaction fee it's a variable amount, something around 190.000 lovelace
 Copy `publicKey` and `secretKey` to `.env` file (see step 9)
 9. Copy .env_example to .end and edit it accordingly\
 `$ cp .env_example .env`
-10. Copy `cip26_example.yml` to `cip26.yml` and edit it accordingly\
+10. Copy `cip26_example.yml` to `cip26.yml` and edit it accordingly
 11. Launch **cip26-cli** and follow the instructions\
 `$ yarn start`
+
+### Testnet-magic numbers
+- 9: Devnet. 	`--testnet-magic=9`
+- 2: Preview. 	`--testnet-magic=2`
+- 1: Preprod. 	`--testnet-magic=1`
+
 
 ### Useful commands
 
