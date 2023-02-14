@@ -3,7 +3,7 @@ import { exec } from "child_process"
 const getNet = (net) => {
     let _net = '';
     switch (net) {
-        case 'dev':
+        case 'devnet':
             _net = '--testnet-magic=9';
             break;
         case 'preprod':
@@ -17,7 +17,7 @@ const getNet = (net) => {
             _net = '--mainnet';
             break;
         default:
-            console.log("Wrong network! Allowed values: dev|preview|preprod|main")
+            console.log("Wrong network! Allowed values: devnet, preview, preprod, mainnet", net)
             break;
     }
     return _net;
