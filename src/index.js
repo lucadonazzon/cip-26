@@ -149,7 +149,20 @@ const protocolFilePath = process.env.PROTOCOL_FILE_PATH
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // generateJson();
 // generateMetadataJsonFile(calculateRootHash());
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const generateUpdate = (subject, entry, entryName) => {
+  const signature = {
+    signature: encodeAndSign(subject, entry, entryName, secretKey),
+    publicKey: publicKey
+  }
+  const update = {
+    [entryName]: { ...entry, signatures: [signature] }
+  }
+  console.log("update:", JSON.stringify(update))
+}
+// generateUpdate("test-xxx-007", { value: "This is a dApp description...1", sequenceNumber: 1 }, "DAppDescription");
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 export {
