@@ -43,7 +43,7 @@ Query UTXO
 ```
 $ cardano-cli query utxo \
   --address $(< payment.addr) \
-  --testnet-magic=2
+  (--mainnet | --testnet-magic NATURAL)
 
 Output:
                            TxHash                                 TxIx        Amount
@@ -70,7 +70,7 @@ $ cardano-cli transaction calculate-min-fee \
 --tx-out-count 1 \
 --witness-count 1 \
 --byron-witness-count 0 \
---testnet-magic 2 \
+(--mainnet | --testnet-magic NATURAL) \
 --protocol-params-file protocol.json
 ```
 
@@ -92,12 +92,12 @@ To sign the transaction:
 $ cardano-cli transaction sign \
 --tx-body-file tx.draft \
 --signing-key-file payment.skey \
---testnet-magic 2 \
+(--mainnet | --testnet-magic NATURAL) \
 --out-file tx.signed
 ```
 
 To submit the transaction:\
-`$ cardano-cli transaction submit --tx-file tx.signed --testnet-magic 2`
+`$ cardano-cli transaction submit --tx-file tx.signed (--mainnet | --testnet-magic NATURAL)`
 
 ### Testnets faucet
 [https://docs.cardano.org/cardano-testnet/tools/faucet](url)

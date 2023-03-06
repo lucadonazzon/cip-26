@@ -46,6 +46,7 @@ const askQuestions0 = () => {
       name: '_net',
       message: 'Which network do you want to operate on?',
       choices: ["Devnet", "Preview", "Preprod", "Mainnet"],
+      default: "Preprod",
       filter(val) {
         return val.toLowerCase();
       },
@@ -141,9 +142,9 @@ const run = async () => {
     init();
 
     // ask questions1: CIP-26 json file generation
-    console.log(chalk.black.bgYellowBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
-    console.log(chalk.black.bgYellowBright.bold(_.pad("Choose network", PAD_END_SIZE)));
-    console.log(chalk.black.bgYellowBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.black.bgMagenta.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    console.log(chalk.black.bgMagenta.bold(_.pad("Choose network", PAD_END_SIZE)));
+    console.log(chalk.black.bgMagenta.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     const { _net } = await askQuestions0();
     // console.log("NET:", _net)
 
