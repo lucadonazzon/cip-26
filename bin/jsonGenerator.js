@@ -82,10 +82,26 @@ function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath) {
 // **********************************************************************************************************
 // **********************************************************************************************************
 // **********************************************************************************************************
+const cleanJsonCip = (cip) => {
+  const _cip = {}
+  for (const attr in cip) {
+    _cip[attr] = cip[attr]
+    if (attr.substring(0, 2) === 'DA') {
+      delete _cip[attr].sequenceNumber;
+      delete _cip[attr].signatures;
+    }
+  }
+  return _cip;
+}
+
+// **********************************************************************************************************
+// **********************************************************************************************************
+// **********************************************************************************************************
 
 const calculateRootHash = (cipFilePath) => {
   const rawdata = fs.readFileSync(cipFilePath);
-  const cip = JSON.parse(rawdata);
+  let cip = JSON.parse(rawdata);
+  cip = cleanJsonCip(cip);
   const sortedCip = jsonKeysSort.sort(cip)
   const _hash = blake2.createHash('blake2b', { digestLength: 32 });
   return _hash.update(Buffer.from(JSON.stringify(sortedCip))).digest('hex')
