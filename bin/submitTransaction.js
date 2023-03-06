@@ -37,13 +37,17 @@ const queryUTXO = (walletAddress, net = 'preview') => {
                 reject(stderr)
                 return;
             }
+            const _match = stdout.match(/([a-z0-9]{64}) *(\d) *(\d+)/);
+            // console.log(">stdout:", stdout, _match)
+            if (_match === null) {
+                resolve({ TxHash: 0, TxIx: 0, Amount: 0 })
+            } else {
+                const TxHash = _match[1];
+                const TxIx = parseInt(_match[2]);
+                const Amount = parseInt(_match[3]);
 
-            const _match = stdout.match(/([a-z0-9]{64}) *(\d) *(\d+)/)
-            const TxHash = _match[1];
-            const TxIx = parseInt(_match[2]);
-            const Amount = parseInt(_match[3]);
-
-            resolve({ TxHash, TxIx, Amount })
+                resolve({ TxHash, TxIx, Amount })
+            }
         });
     });
 }

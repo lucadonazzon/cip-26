@@ -46,7 +46,7 @@ const askQuestions0 = () => {
       name: '_net',
       message: 'Which network do you want to operate on?',
       choices: ["Devnet", "Preview", "Preprod", "Mainnet"],
-      default: "Preview",
+      default: "Preprod",
       filter(val) {
         return val.toLowerCase();
       },

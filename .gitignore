@@ -8,7 +8,7 @@ lerna-debug.log*
 cip26.yml
 *.skey
 *.vkey
-
+*.addr
 tx.*
 *.json
 
