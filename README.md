@@ -12,7 +12,7 @@
 `$ cardano-cli stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey`
 3. Create Wallet Address\
 `$ cardano-cli address build --payment-verification-key-file payment.vkey --stake-verification-key-file stake.vkey --out-file payment.addr (--mainnet | --testnet-magic NATURAL)`
-4. Request Test ADA at [https://docs.cardano.org/cardano-testnet/tools/faucet](url)\
+4. Request Test ADA at [https://docs.cardano.org/cardano-testnet/tools/faucet](https://docs.cardano.org/cardano-testnet/tools/faucet)\
 NB transaction fee it's a variable amount, something around 190.000 lovelace
 5. Retrieves the node’s current pool parameters\
 `$ cardano-cli query protocol-parameters --out-file protocol.json (--mainnet | --testnet-magic NATURAL)`
