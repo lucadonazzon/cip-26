@@ -1,7 +1,7 @@
 # How to register dApp to Cardano + submit metadata to CIP-26 server
 
 ## Set up cardano-cli
-[https://github.com/piotr-iohk/cardano-up](url){:target="_blank"}
+[https://github.com/piotr-iohk/cardano-up](https://github.com/piotr-iohk/cardano-up)
 
 
 ## Set up wallet
