@@ -37,7 +37,7 @@ Copy `publicKey` and `secretKey` to `.env` file (see step 9)
 
 ### Useful commands
 
-Ref.: [https://docs.cardano.org/development-guidelines/use-cli](url)
+Ref.: [https://docs.cardano.org/development-guidelines/use-cli](https://docs.cardano.org/development-guidelines/use-cli)
 
 Query UTXO
 ```
@@ -100,7 +100,7 @@ To submit the transaction:\
 `$ cardano-cli transaction submit --tx-file tx.signed (--mainnet | --testnet-magic NATURAL)`
 
 ### Testnets faucet
-[https://docs.cardano.org/cardano-testnet/tools/faucet](url)
+[https://docs.cardano.org/cardano-testnet/tools/faucet](https://docs.cardano.org/cardano-testnet/tools/faucet)
 
 
 
