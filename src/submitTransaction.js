@@ -20,6 +20,12 @@ const net = process.env.NET;
 
 const run = async () => {
     try {
+        console.log("- NET: ", net)
+        console.log("- walletAddress: ", walletAddress)
+        console.log("- metadataFilePath: ", metadataFilePath)
+        console.log("- protocolFilePath: ", protocolFilePath)
+        console.log("- paymentSkeyFilePath: ", paymentSkeyFilePath)
+        console.log("--------------------------------------------------------------------------------")
         const { TxHash, TxIx, Amount } = await queryUTXO(walletAddress, net)
         console.log("- TxHash: ", TxHash)
         console.log("- TxIx: ", TxIx)

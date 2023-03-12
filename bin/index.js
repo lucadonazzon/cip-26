@@ -24,8 +24,15 @@ const metadataFilePath = process.env.METADATA_FILE_PATH;
 const protocolFilePath = process.env.PROTOCOL_FILE_PATH
 const cipServerUrl = process.env.CIP_SERVER_URL;
 const paymentSkeyFilePath = process.env.PAYMENT_SKEY_FILE_PATH;
+const net = process.env.NET;
 const PAD_END_SIZE = 150;
 
+Object.defineProperty(String.prototype, 'capitalize', {
+  value: function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  },
+  enumerable: false
+});
 
 const init = () => {
   console.log(
@@ -46,7 +53,7 @@ const askQuestions0 = () => {
       name: '_net',
       message: 'Which network do you want to operate on?',
       choices: ["Devnet", "Preview", "Preprod", "Mainnet"],
-      default: "Preprod",
+      default: net ? net.capitalize() : "Mainnet",
       filter(val) {
         return val.toLowerCase();
       },
