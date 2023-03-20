@@ -1,0 +1,7 @@
+---
+subject: TestDApp-001
+entries:
+  - entryName: DAppDescription
+    entry:
+      value: This is a dApp description...UPDATE(1)
+      sequenceNumber: 1

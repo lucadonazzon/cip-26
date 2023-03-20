@@ -5,6 +5,7 @@ import nacl from 'tweetnacl';
 import fs from "fs";
 import jsonKeysSort from 'json-keys-sort';
 import YAML from 'yaml';
+import axios from "axios";
 import * as util from 'tweetnacl-util';
 nacl.util = util;
 
@@ -47,34 +48,47 @@ const encodeAndSign = (subject, entry, entryName, secretKey = '') => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath) {
-  const file = fs.readFileSync(cipYmlFilePath, 'utf8')
-  const yml = YAML.parse(file);
-
-  const myCipJsonFile = {}
-  subject = yml.subject;
-
-  for (const prop in yml) {
-    if (prop === 'entries') {
-      for (const item of yml[prop]) {
-        const { entryName, entry } = item;
-        const signature = {
-          signature: encodeAndSign(subject, entry, entryName, secretKey),
-          publicKey: publicKey
-        }
-        myCipJsonFile[entryName] = {
-          ...entry, signatures: [signature]
-        }
-      }
-    } else {
-      myCipJsonFile[prop] = yml[prop]
-    }
-  }
-
+async function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath, actionType, cipServerUrl) {
   try {
+    const file = fs.readFileSync(cipYmlFilePath, 'utf8')
+    const yml = YAML.parse(file);
+
+    let myCipJsonFile = {};
+    subject = yml.subject;
+
+    for (const prop in yml) {
+      if (prop === 'entries') {
+        for (const item of yml[prop]) {
+          const { entryName, entry } = item;
+          const signature = {
+            signature: encodeAndSign(subject, entry, entryName, secretKey),
+            publicKey: publicKey
+          }
+          myCipJsonFile[entryName] = {
+            ...entry, signatures: [signature]
+          }
+        }
+      } else {
+        myCipJsonFile[prop] = yml[prop]
+      }
+    }
+    // console.log("---generateJson actionType:", actionType, cipServerUrl)
+    // if (actionType === 'UPDATE') {
+    //   const cip = { ...myCipJsonFile }
+    //   const { subject } = cip;
+    //   // console.log("@@@@@", cip)
+    //   delete cip.subject;
+    //   const { data: old } = await axios.get(`${cipServerUrl}/metadata/${subject}`)
+    //   // console.log("old:", old)
+    //   // const newCip = { ...old, ...cip }
+    //   // console.log("newCip:", newCip)
+    //   myCipJsonFile = { ...old, ...cip }
+    // }
+
     fs.writeFileSync(cipFilePath, JSON.stringify(myCipJsonFile))
     return { subject, cip26FilePath: cipFilePath }
   } catch (error) {
+    console.error("ERR #88:", error)
     return error
   }
 }
@@ -102,6 +116,7 @@ const calculateRootHash = (cipFilePath) => {
   const rawdata = fs.readFileSync(cipFilePath);
   let cip = JSON.parse(rawdata);
   cip = cleanJsonCip(cip);
+  
   const sortedCip = jsonKeysSort.sort(cip)
   const _hash = blake2.createHash('blake2b', { digestLength: 32 });
   return _hash.update(Buffer.from(JSON.stringify(sortedCip))).digest('hex')
@@ -111,13 +126,13 @@ const calculateRootHash = (cipFilePath) => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publicKey) => {
+const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publicKey, actionType) => {
   try {
 
     const metadataJson = {
       "1667": {
         subject,
-        type: "REGISTER",
+        type: actionType,
         rootHash: cipRootHash,
         cip26: ["https://cip26metadata.apps.atixlabs.xyz"],
       }
@@ -150,5 +165,5 @@ const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publ
 // **********************************************************************************************************
 
 export {
-  generateJson, calculateRootHash, generateMetadataJsonFile
+  generateJson, calculateRootHash, generateMetadataJsonFile, cleanJsonCip
 }
