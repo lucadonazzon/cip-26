@@ -48,13 +48,15 @@ const encodeAndSign = (subject, entry, entryName, secretKey = '') => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-async function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath, actionType, cipServerUrl) {
+function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath) {
   try {
     const file = fs.readFileSync(cipYmlFilePath, 'utf8')
     const yml = YAML.parse(file);
 
+
     let myCipJsonFile = {};
-    subject = yml.subject;
+    const subject = yml.subject;
+
 
     for (const prop in yml) {
       if (prop === 'entries') {
@@ -72,20 +74,8 @@ async function generateJson(cipYmlFilePath, secretKey, publicKey, cipFilePath, a
         myCipJsonFile[prop] = yml[prop]
       }
     }
-    // console.log("---generateJson actionType:", actionType, cipServerUrl)
-    // if (actionType === 'UPDATE') {
-    //   const cip = { ...myCipJsonFile }
-    //   const { subject } = cip;
-    //   // console.log("@@@@@", cip)
-    //   delete cip.subject;
-    //   const { data: old } = await axios.get(`${cipServerUrl}/metadata/${subject}`)
-    //   // console.log("old:", old)
-    //   // const newCip = { ...old, ...cip }
-    //   // console.log("newCip:", newCip)
-    //   myCipJsonFile = { ...old, ...cip }
-    // }
-
     fs.writeFileSync(cipFilePath, JSON.stringify(myCipJsonFile))
+
     return { subject, cip26FilePath: cipFilePath }
   } catch (error) {
     console.error("ERR #88:", error)
@@ -116,7 +106,7 @@ const calculateRootHash = (cipFilePath) => {
   const rawdata = fs.readFileSync(cipFilePath);
   let cip = JSON.parse(rawdata);
   cip = cleanJsonCip(cip);
-  
+
   const sortedCip = jsonKeysSort.sort(cip)
   const _hash = blake2.createHash('blake2b', { digestLength: 32 });
   return _hash.update(Buffer.from(JSON.stringify(sortedCip))).digest('hex')

@@ -29,9 +29,10 @@ const updateCip = (cipServerUrl, cipFilePath) => {
     const cip = JSON.parse(file);
 
     const subject = cip.subject;
+    // console.log(">>", subject, file, cip)
     delete cip.subject;
 
-    
+
     axios.put(`${cipServerUrl}/metadata/${subject}`, cip)
       .then(function (response) {
         resolve(response.data)
@@ -48,7 +49,7 @@ const getCipFromServer = async (cipServerUrl, cipFilePath) => {
     const cipOld = JSON.parse(file);
     const subject = cipOld.subject;
     const cip = await axios.get(`${cipServerUrl}/metadata/${subject}`)
-    
+
     fs.writeFileSync(cipFilePath, JSON.stringify(cip.data))
   } catch (error) {
     return error;

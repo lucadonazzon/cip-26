@@ -169,7 +169,7 @@ const run = async () => {
     const { _cipYmlFilePath, _secretKey, _publicKey, _cipFilePath } = answers1;
     const answers3 = await askQuestions3();
     const { _cipServerUrl } = answers3;
-    const { subject, cip26FilePath } = generateJson(_cipYmlFilePath, _secretKey, _publicKey, _cipFilePath, _actionType, _cipServerUrl);
+    const { subject, cip26FilePath } = generateJson(_cipYmlFilePath, _secretKey, _publicKey, _cipFilePath);
     console.log(chalk.black.bgYellowBright.bold(_.pad(`SUBJECT: ${subject}`, PAD_END_SIZE)))
     console.log(chalk.black.bgYellowBright.bold(_.pad(`Done! CIP-26 json file created: ${cip26FilePath}`, PAD_END_SIZE)))
 
