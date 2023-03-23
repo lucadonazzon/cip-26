@@ -9,7 +9,6 @@ import axios from "axios";
 import * as util from 'tweetnacl-util';
 nacl.util = util;
 
-let subject = '';
 
 dotenv.config();
 
@@ -116,7 +115,7 @@ const calculateRootHash = (cipFilePath) => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-const generateMetadataJsonFile = (metadataFilePath, cipRootHash, secretKey, publicKey, actionType) => {
+const generateMetadataJsonFile = (subject,metadataFilePath, cipRootHash, secretKey, publicKey, actionType) => {
   try {
 
     const metadataJson = {

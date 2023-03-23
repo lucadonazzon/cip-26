@@ -23,6 +23,31 @@ const getNet = (net) => {
     return _net;
 }
 
+const queryTip=(net = 'preview')=>{
+    // cardano-cli query tip --testnet-magic 1
+    return new Promise((resolve, reject) => {
+
+        const cmd = `cardano-cli query tip ${getNet(net)}`;
+
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                reject(error.message)
+                return;
+            }
+            if (stderr) {
+                reject(stderr)
+                return;
+            }
+
+            const _match = stdout.match(/(\d+) Lovelace/)
+            const fee = parseInt(_match[1]);
+            const finalAmount = Amount - fee;
+
+            resolve({ fee, finalAmount });
+        });
+    });
+}
+
 const queryUTXO = (walletAddress, net = 'preview') => {
     return new Promise((resolve, reject) => {
 

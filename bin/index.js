@@ -208,7 +208,7 @@ const run = async () => {
     const { _metadataFilePath } = answers2;
     const _rootHash = calculateRootHash(_cipFilePath)
     console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Calculated rootHash: ${_rootHash}`, PAD_END_SIZE)))
-    const out2 = generateMetadataJsonFile(_metadataFilePath, _rootHash, secretKey, publicKey, _actionType)
+    const out2 = generateMetadataJsonFile(subject, _metadataFilePath, _rootHash, secretKey, publicKey, _actionType)
     if (out2 === true) console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Metadata.json generated: ${_metadataFilePath}`, PAD_END_SIZE)))
 
 
