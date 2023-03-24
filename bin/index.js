@@ -9,7 +9,7 @@ import figlet from "figlet";
 import _ from "lodash";
 
 import { generateJson, calculateRootHash, generateMetadataJsonFile } from "./jsonGenerator.js"
-import { submitCip } from "./submitCip26.js";
+import { submitCip, updateCip, getCipFromServer } from "./submitCip26.js";
 import { queryUTXO, createDraftTransaction, calculateTransactionFee, buildRealTransaction, signdRealTransaction, submitTransaction } from "./submitTransaction.js";
 
 dotenv.config();
@@ -24,8 +24,15 @@ const metadataFilePath = process.env.METADATA_FILE_PATH;
 const protocolFilePath = process.env.PROTOCOL_FILE_PATH
 const cipServerUrl = process.env.CIP_SERVER_URL;
 const paymentSkeyFilePath = process.env.PAYMENT_SKEY_FILE_PATH;
+const net = process.env.NET;
 const PAD_END_SIZE = 150;
 
+Object.defineProperty(String.prototype, 'capitalize', {
+  value: function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  },
+  enumerable: false
+});
 
 const init = () => {
   console.log(
@@ -46,10 +53,17 @@ const askQuestions0 = () => {
       name: '_net',
       message: 'Which network do you want to operate on?',
       choices: ["Devnet", "Preview", "Preprod", "Mainnet"],
-      default: "Preprod",
+      default: net ? net.capitalize() : "Mainnet",
       filter(val) {
         return val.toLowerCase();
       },
+    },
+    {
+      type: 'list',
+      name: '_actionType',
+      message: 'What action is the certificate asserting?',
+      choices: ["REGISTER", "UPDATE"],
+      default: "REGISTER"
     },
   ];
   return inquirer.prompt(questions);
@@ -145,17 +159,44 @@ const run = async () => {
     console.log(chalk.black.bgMagenta.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     console.log(chalk.black.bgMagenta.bold(_.pad("Choose network", PAD_END_SIZE)));
     console.log(chalk.black.bgMagenta.bold(_.padEnd('-', PAD_END_SIZE, '-')))
-    const { _net } = await askQuestions0();
-    // console.log("NET:", _net)
+    const { _net, _actionType } = await askQuestions0();
+    // console.log(`NET: ${_net}, ACTION: ${_actionType}`)
 
     console.log(chalk.black.bgYellowBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     console.log(chalk.black.bgYellowBright.bold(_.pad("CIP-26 json file generation..", PAD_END_SIZE)));
     console.log(chalk.black.bgYellowBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     const answers1 = await askQuestions1();
     const { _cipYmlFilePath, _secretKey, _publicKey, _cipFilePath } = answers1;
+    const answers3 = await askQuestions3();
+    const { _cipServerUrl } = answers3;
     const { subject, cip26FilePath } = generateJson(_cipYmlFilePath, _secretKey, _publicKey, _cipFilePath);
     console.log(chalk.black.bgYellowBright.bold(_.pad(`SUBJECT: ${subject}`, PAD_END_SIZE)))
     console.log(chalk.black.bgYellowBright.bold(_.pad(`Done! CIP-26 json file created: ${cip26FilePath}`, PAD_END_SIZE)))
+
+    // ask questions3: CIP-26 server phase
+    console.log();
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+    if (_actionType === 'REGISTER')
+      console.log(chalk.black.bgCyanBright.bold(_.pad("CIP-26 server submission", PAD_END_SIZE)));
+    else
+      console.log(chalk.black.bgCyanBright.bold(_.pad("CIP-26 server update", PAD_END_SIZE)));
+    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
+
+    if (_actionType === 'REGISTER') {
+      const cipSubm = await submitCip(_cipServerUrl, _cipFilePath);
+      if (typeof cipSubm === 'string' && cipSubm === 'Created')
+        console.log(chalk.black.bgCyanBright.bold(_.pad(`- ${_cipFilePath} successfully submitted!`, PAD_END_SIZE)))
+    } else {
+
+      const cipUpdt = await updateCip(_cipServerUrl, _cipFilePath);
+      // console.log("****cipUpdt:", cipUpdt)
+
+      await getCipFromServer(_cipServerUrl, _cipFilePath)
+      if (typeof cipUpdt === 'string')
+        console.log(chalk.black.bgCyanBright.bold(_.pad(`- ${_cipFilePath} successfully updated!`, PAD_END_SIZE)))
+    }
+
+
 
 
     // ask questions2: Metadata.json generation
@@ -167,19 +208,10 @@ const run = async () => {
     const { _metadataFilePath } = answers2;
     const _rootHash = calculateRootHash(_cipFilePath)
     console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Calculated rootHash: ${_rootHash}`, PAD_END_SIZE)))
-    const out2 = generateMetadataJsonFile(_metadataFilePath, _rootHash, secretKey, publicKey)
+    const out2 = generateMetadataJsonFile(subject, _metadataFilePath, _rootHash, secretKey, publicKey, _actionType)
     if (out2 === true) console.log(chalk.yellowBright.bgBlue.bold(_.pad(`Metadata.json generated: ${_metadataFilePath}`, PAD_END_SIZE)))
 
-    // ask questions3: CIP-26 server phase
-    console.log();
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
-    console.log(chalk.black.bgCyanBright.bold(_.pad("CIP-26 server submission", PAD_END_SIZE)));
-    console.log(chalk.black.bgCyanBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
-    const answers3 = await askQuestions3();
-    const { _cipServerUrl } = answers3;
-    const cipSubm = await submitCip(_cipServerUrl, _cipFilePath);
-    if (typeof cipSubm === 'string' && cipSubm === 'Created')
-      console.log(chalk.black.bgCyanBright.bold(_.pad(`- ${_cipFilePath} successfully submitted!`, PAD_END_SIZE)))
+
 
 
     // ask questions4: on-chain submission
