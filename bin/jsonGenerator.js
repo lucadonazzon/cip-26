@@ -115,7 +115,7 @@ const calculateRootHash = (cipFilePath) => {
 // **********************************************************************************************************
 // **********************************************************************************************************
 
-const generateMetadataJsonFile = (subject,metadataFilePath, cipRootHash, secretKey, publicKey, actionType) => {
+const generateMetadataJsonFile = (subject, metadataFilePath, cipRootHash, secretKey, publicKey, actionType, cipServerUrl) => {
   try {
 
     const metadataJson = {
@@ -123,7 +123,7 @@ const generateMetadataJsonFile = (subject,metadataFilePath, cipRootHash, secretK
         subject,
         type: actionType,
         rootHash: cipRootHash,
-        cip26: ["https://cip26metadata.apps.atixlabs.xyz"],
+        cip26: [cipServerUrl],
       }
     }
 
