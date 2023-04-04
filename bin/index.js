@@ -253,6 +253,8 @@ const run = async () => {
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Submitting transaction...`, PAD_END_SIZE)))
     await submitTransaction(_net)
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction submitted!`, PAD_END_SIZE)))
+    const { TxHash: TxHash2 } = await queryUTXO(_walletAddress, _net);
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- TxHash: ${TxHash2}`, PAD_END_SIZE)))
 
 
   } catch (error) {

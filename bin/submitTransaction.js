@@ -23,7 +23,7 @@ const getNet = (net) => {
     return _net;
 }
 
-const queryTip=(net = 'preview')=>{
+const queryTip = (net = 'preview') => {
     // cardano-cli query tip --testnet-magic 1
     return new Promise((resolve, reject) => {
 
