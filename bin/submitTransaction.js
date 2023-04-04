@@ -63,7 +63,7 @@ const queryUTXO = (walletAddress, net = 'preview') => {
                 return;
             }
             const _match = stdout.match(/([a-z0-9]{64}) *(\d) *(\d+)/);
-            // console.log(">stdout:", stdout, _match)
+            // console.log(">stdout:", stdout)
             if (_match === null) {
                 resolve({ TxHash: 0, TxIx: 0, Amount: 0 })
             } else {
@@ -193,4 +193,4 @@ const submitTransaction = (net = 'preview') => {
     });
 }
 
-export { queryUTXO, createDraftTransaction, calculateTransactionFee, buildRealTransaction, signdRealTransaction, submitTransaction }
+export { queryUTXO, createDraftTransaction, calculateTransactionFee, buildRealTransaction, signdRealTransaction, submitTransaction, getNet }

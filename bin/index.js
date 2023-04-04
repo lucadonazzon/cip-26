@@ -10,7 +10,7 @@ import _ from "lodash";
 
 import { generateJson, calculateRootHash, generateMetadataJsonFile } from "./jsonGenerator.js"
 import { submitCip, updateCip, getCipFromServer } from "./submitCip26.js";
-import { queryUTXO, createDraftTransaction, calculateTransactionFee, buildRealTransaction, signdRealTransaction, submitTransaction } from "./submitTransaction.js";
+import { queryUTXO, createDraftTransaction, calculateTransactionFee, buildRealTransaction, signdRealTransaction, submitTransaction, getNet } from "./submitTransaction.js";
 
 dotenv.config();
 
@@ -160,7 +160,7 @@ const run = async () => {
     console.log(chalk.black.bgMagenta.bold(_.pad("Choose network", PAD_END_SIZE)));
     console.log(chalk.black.bgMagenta.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     const { _net, _actionType } = await askQuestions0();
-    // console.log(`NET: ${_net}, ACTION: ${_actionType}`)
+    // // console.log(`NET: ${_net}, ACTION: ${_actionType}`)
 
     console.log(chalk.black.bgYellowBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     console.log(chalk.black.bgYellowBright.bold(_.pad("CIP-26 json file generation..", PAD_END_SIZE)));
@@ -214,7 +214,7 @@ const run = async () => {
 
 
 
-    // ask questions4: on-chain submission
+    // // ask questions4: on-chain submission
     console.log();
     console.log(chalk.black.bgGreenBright.bold(_.padEnd('-', PAD_END_SIZE, '-')))
     console.log(chalk.black.bgGreenBright.bold(_.pad("Block-chain submission", PAD_END_SIZE)));
@@ -253,8 +253,8 @@ const run = async () => {
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`Submitting transaction...`, PAD_END_SIZE)))
     await submitTransaction(_net)
     console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- Transaction submitted!`, PAD_END_SIZE)))
-    const { TxHash: TxHash2 } = await queryUTXO(_walletAddress, _net);
-    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- TxHash: ${TxHash2}`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- To see the TxHash run the following command:`, PAD_END_SIZE)))
+    console.log(chalk.black.bgGreenBright.bold(_.padEnd(`- $ cardano-cli query utxo --address ${_walletAddress} ${getNet(_net)}`, PAD_END_SIZE)))
 
 
   } catch (error) {

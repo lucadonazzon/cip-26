@@ -41,8 +41,12 @@ const run = async () => {
         console.log("- Transaction signed!")
         await submitTransaction(net)
         console.log("- Transaction submitted!")
-        const { TxHash: TxHash2 } = await queryUTXO(walletAddress, net)
-        console.log("- TxHash: ", TxHash2)
+        setTimeout(async () => {
+            const { TxHash, TxIx, Amount } = await queryUTXO(walletAddress, net)
+            console.log("- TxHash: ", TxHash)
+            console.log("- TxIx: ", TxIx)
+            console.log("- Amount: ", Amount)
+        }, 100);
     } catch (error) {
         console.error(error)
     }
